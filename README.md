@@ -59,8 +59,16 @@ written parts and then type the code between the code fences.
 > of the document, works consistently with the `~~~` instead of the three backticks.
 
 ```
-$ ghost_story tell ruby_classes.md
+$ ghost_story tell ruby_classes.md APPLICATION
 ```
+
+The application you specify is important. That is the name of the
+Appliation that the key events will be sent. At the moment, this is
+fairly simplistic and will really only work with non-Terminal editors.
+
+> Also, note that if your editor helps you with auto indention when you are
+> writing code, this will need to be turned off. I found that
+> with Sublime Text I needed to set `"auto_indent": false` for example.
 
 ## Contributing
 

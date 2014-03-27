@@ -2,11 +2,17 @@ module GhostStory
 
   class StoryBuilder
 
+    def initialize(options)
+      @options = options || {}
+    end
+
+    attr_reader :options
+
     #
     # @returns [Story] a story object is something that can be executed to tell
     #   the story created by the builder.
     #
-    def self.build(story)
+    def build(story)
       kram = Kramdown::Document.new(story)
 
       whole_story = build_story(kram.root)
@@ -21,7 +27,7 @@ module GhostStory
     #   will either display text to the screen or drive the editor to
     #   type in the desired code.
     #
-    def self.build_story(node_with_children)
+    def build_story(node_with_children)
       node_with_children.children.map { |node| build_chapter(node) }
     end
 
@@ -33,7 +39,7 @@ module GhostStory
     #
     # @returns [lambda] the code that needs to be written or the text that needs
     #   to be displayed to the reader.
-    def self.build_chapter(node)
+    def build_chapter(node)
       if node_contains_code?(node)
         build_code_chapter(node)
       else
@@ -47,7 +53,7 @@ module GhostStory
     # backticks "```" but those are converted to codespans. This is a limitation
     # of using Kramdown.
     #
-    def self.node_contains_code?(node)
+    def node_contains_code?(node)
       node.type == :codeblock
     end
 
@@ -55,16 +61,22 @@ module GhostStory
     # Nodes identified as a code chapter will first ask for input from the person
     # running the story and then it will execute the story.
     #
-    def self.build_code_chapter(node)
+    def build_code_chapter(node)
       code = node.value
       lambda { ask_to_continue ; Dutchman.write(to: application, text: code, speed: :fast, humanize: true) }
     end
 
     #
-    # The application to which to write the code. At the moment that is a single
-    # hard-coded application. In the future this will be a configurable value.
+    # The application to which to write the code.
     #
-    def self.application
+    def application
+      options[:application] || default_application
+    end
+
+    #
+    # This default value is not kosher!
+    #
+    def default_application
       "Sublime Text"
     end
 
@@ -73,7 +85,7 @@ module GhostStory
     # with the story. This allows them to read the human parts and continue
     # with the typed parts as necessary.
     #
-    def self.ask_to_continue
+    def ask_to_continue
       Formatador.display_line "\n\n*** [bold]Press ENTER to type CODE[/] ***"
       STDIN.gets
     end
@@ -84,7 +96,7 @@ module GhostStory
     # to child elements to create the entire string to be displayed. There
     # are some simple rules for headers to make them a particular color.
     #
-    def self.build_standard_chapter(node)
+    def build_standard_chapter(node)
 
       story_so_far = ""
 
@@ -102,7 +114,7 @@ module GhostStory
       story_so_far
     end
 
-    def self.header_display_color
+    def header_display_color
       "[green]"
     end
 

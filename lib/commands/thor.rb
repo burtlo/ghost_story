@@ -16,11 +16,13 @@ Ghost Story BOOO!
 
     end
 
-    desc "tell STORYFILE",
+    desc "tell STORYFILE APPLICATION",
       "Tell the story contained in the file"
-    def tell(story_file)
+    def tell(story_file,application=nil)
       # TODO: find out of the file is real!
-      GhostStory.read_file(story_file)
+      # TODO: Seems Thor has an options hash, so this is probabyly a bad name
+      options = { application: application }
+      GhostStory.read_file(story_file,options)
     end
 
     desc "help", "This commoand"

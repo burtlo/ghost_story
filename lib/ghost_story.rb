@@ -11,12 +11,13 @@ require "ghost_story/story"
 
 module GhostStory
 
-  def self.read_file(story_file)
-    read File.read(story_file)
+  def self.read_file(story_file,options = {})
+    read File.read(story_file), options
   end
 
-  def self.read(story)
-    story = StoryBuilder.build(story)
+  def self.read(story,options = {})
+    story_builder = StoryBuilder.new(options)
+    story = story_builder.build(story)
     story.read!
   end
 
