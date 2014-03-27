@@ -8,9 +8,12 @@ Gem::Specification.new do |spec|
   spec.version       = GhostStory::VERSION
   spec.authors       = ["Franklin Webber"]
   spec.email         = ["franklin.webber@gmail.com"]
-  spec.summary       = %q{Ghost Story allows you to write a story in markdown. The story can then be
+  spec.summary       = %q{Markdown driving automation used for screencasts or walkthroughs of code where you don't want to type.}
+
+  spec.description   = %q{Ghost Story allows you to write a story in markdown. The story can then be
 read back to you. A ghost story is both text and automated scripts that will
 type out code.}
+
   spec.homepage      = "https://github.com/burtlo/ghost_story"
   spec.license       = "MIT"
 
