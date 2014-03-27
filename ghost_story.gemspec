@@ -8,15 +8,21 @@ Gem::Specification.new do |spec|
   spec.version       = GhostStory::VERSION
   spec.authors       = ["Franklin Webber"]
   spec.email         = ["franklin.webber@gmail.com"]
-  spec.summary       = %q{Write a short summary. Required.}
-  spec.description   = %q{Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Ghost Story allows you to write a story in markdown. The story can then be
+read back to you. A ghost story is both text and automated scripts that will
+type out code.}
+  spec.homepage      = "https://github.com/burtlo/ghost_story"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "dutchman", ">= 0.0.1"
+  spec.add_dependency "formatador", "~> 0.2"
+  spec.add_dependency "kramdown", "~> 1.1"
+  spec.add_dependency "thor", "~> 0.18"
 
   spec.add_development_dependency "bundler", "~> 1.5"
   spec.add_development_dependency "rake"
