@@ -2,21 +2,37 @@ module GhostStory
 
   class StoryBuilder
 
+    #
+    # @returns [Story] a story object is something that can be executed to tell
+    #   the story created by the builder.
+    #
     def self.build(story)
       kram = Kramdown::Document.new(story)
 
-      binding.pry
-      whole_story = [ clear_screen ] + build_story(kram.root)
+      whole_story = build_story(kram.root)
 
       Story.new(whole_story)
     end
 
+    private
+
+    #
+    # @returns [Array<lambda>] an array of executable objects which
+    #   will either display text to the screen or drive the editor to
+    #   type in the desired code.
+    #
     def self.build_story(node_with_children)
-      node_with_children.children.map do |node|
-        build_chapter(node)
-      end
+      node_with_children.children.map { |node| build_chapter(node) }
     end
 
+    #
+    # Building a chapter creates and returns a delayed block of code for the
+    # particular node. It is packaged like this so that each chapter can be
+    # placed into an array of all the chapters that need to be executed. Ensuring
+    # that they execute in the correct order.
+    #
+    # @returns [lambda] the code that needs to be written or the text that needs
+    #   to be displayed to the reader.
     def self.build_chapter(node)
       if node_contains_code?(node)
         build_code_chapter(node)
@@ -25,30 +41,54 @@ module GhostStory
       end
     end
 
+    #
+    # Currently a node that identifies as a codeblock is any node using the
+    # three "~~~" syntax. Previously, I was using the more conventional three
+    # backticks "```" but those are converted to codespans. This is a limitation
+    # of using Kramdown.
+    #
     def self.node_contains_code?(node)
       node.type == :codeblock
     end
 
+    #
+    # Nodes identified as a code chapter will first ask for input from the person
+    # running the story and then it will execute the story.
+    #
     def self.build_code_chapter(node)
       code = node.value
-
-      lambda { ask_for_input ; Dutchman.write(to: "Sublime Text", text: code, speed: :fast, humanize: true) }
+      lambda { ask_to_continue ; Dutchman.write(to: application, text: code, speed: :fast, humanize: true) }
     end
 
-    def self.clear_screen
-      lambda { puts "\e[H\e[2J" }
+    #
+    # The application to which to write the code. At the moment that is a single
+    # hard-coded application. In the future this will be a configurable value.
+    #
+    def self.application
+      "Sublime Text"
     end
 
-    def self.ask_for_input
-      Formatador.display_line "\n*** [bold]Press ENTER to type CODE[/] ***\n"
+    #
+    # Prompts the person running the story to press a key to continue with
+    # with the story. This allows them to read the human parts and continue
+    # with the typed parts as necessary.
+    #
+    def self.ask_to_continue
+      Formatador.display_line "\n\n*** [bold]Press ENTER to type CODE[/] ***"
       STDIN.gets
     end
 
+    #
+    # A non-code portion of the story simply needs to be collected up and
+    # a string needs to be created from it. This method is called recursively
+    # to child elements to create the entire string to be displayed. There
+    # are some simple rules for headers to make them a particular color.
+    #
     def self.build_standard_chapter(node)
 
       story_so_far = ""
 
-      story_so_far += "\n[green]" if node.type == :header
+      story_so_far += "\n#{header_display_color}" if node.type == :header
       story_so_far += node.value if node.type == :text
 
       if not node.children.empty?
@@ -60,6 +100,10 @@ module GhostStory
       story_so_far += "[/]\n" if node.type == :header
 
       story_so_far
+    end
+
+    def self.header_display_color
+      "[green]"
     end
 
   end
