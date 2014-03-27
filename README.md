@@ -29,7 +29,38 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+First write the script that you want to execute in markdown.
+
+    # Ruby Classes
+
+    If you are already familar with classes in other languages, you will have
+    no time understanding how they are created in Ruby.
+
+    ~~~~
+    class Square
+
+      def initialize(height)
+        @height = height
+      end
+
+      attr_reader :height
+
+      def area
+        height * height
+      end
+    end
+    ~~~~
+
+Then with the completed script you run the `ghost_story` binary which will
+read the story and then create an interactive version which will show you the
+written parts and then type the code between the code fences.
+
+> Some limitation in Kramdown, which is used to generate an object representation
+> of the document, works consistently with the `~~~` instead of the three backticks.
+
+```
+$ ghost_story tell ruby_classes.md
+```
 
 ## Contributing
 
